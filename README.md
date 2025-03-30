@@ -1,29 +1,46 @@
-# vps_surplus_value
+# VPS 剩余价值计算器
 
-This template should help get you started developing with Vue 3 in Vite.
+一款优雅的 Web 应用，帮助您计算 VPS 服务器的剩余价值，实现资源的最优利用。
 
-## Recommended IDE Setup
+## 🌟 功能特点
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **多币种支持**：支持美元、欧元、港币、人民币等多种货币汇率换算
+- **实时汇率**：自动获取最新汇率数据，确保计算准确性
+- **多种付款周期**：支持月付、季付、半年付、年付、两年付和三年付等多种付款周期精确计算
+- **精确计算**：基于精确的时间计算，获取最准确的剩余价值
+- **图片分享**：一键生成精美的计算结果图片，方便分享或记录
+- **响应式设计**：完美适配手机、平板和桌面设备
 
-## Customize configuration
+## 💻 使用指南
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. **输入续费金额**：填写您的 VPS 续费金额
+2. **选择货币类型**：选择金额对应的货币类型（USD、EUR、CNY等）
+3. **选择付款周期**：选择您的付款周期（月付、年付等）
+4. **输入到期时间**：选择您的 VPS 到期日期
+5. **点击计算**：系统会自动计算并显示剩余价值
+6. **分享结果**：可以一键生成精美图片并获取分享链接
 
-## Project Setup
+## 📊 计算原理
 
-```sh
-npm install
-```
+本计算器基于以下原理进行剩余价值计算：
 
-### Compile and Hot-Reload for Development
+1. 首先获取 VPS 付款周期的总天数
+2. 然后计算每天的价值 = 总价值 ÷ 总天数
+3. 计算当前日期到到期日期的剩余天数
+4. 剩余价值 = 每天价值 × 剩余天数
 
-```sh
-npm run dev
-```
+所有计算均考虑了不同付款周期的实际天数差异，并对时间进行精确计算，确保结果的准确性。
 
-### Compile and Minify for Production
+## 🔧 技术栈
 
-```sh
-npm run build
-```
+- **前端框架**: Vue 3
+- **UI 组件库**: Element Plus
+- **状态管理**: Vue 3 Composition API
+- **HTTP 请求**: Fetch API
+- **样式预处理**: CSS + SCSS
+- **构建工具**: Vite
+- **图片处理**: SVG + 图床 API
+
+---
+
+💙 感谢使用 VPS 剩余价值计算器！如果您觉得它有用，请给项目点个星！
