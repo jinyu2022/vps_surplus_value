@@ -215,7 +215,7 @@ const formData = reactive({
   renewalAmount: 12.0, // 续费金额
   currency: "USD", // 货币类型，默认美元
   paymentCycle: "Yearly", // 付款周期，默认年付
-  expiryDate: "2025-04-01", // 到期日期
+  expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-'), // 到期日期
 });
 
 /**

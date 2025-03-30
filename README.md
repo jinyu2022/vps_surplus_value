@@ -33,13 +33,8 @@
 
 ## 🔧 技术栈
 
-- **前端框架**: Vue 3
-- **UI 组件库**: Element Plus
-- **状态管理**: Vue 3 Composition API
-- **HTTP 请求**: Fetch API
-- **样式预处理**: CSS + SCSS
-- **构建工具**: Vite
-- **图片处理**: SVG + 图床 API
+感谢 [SKY Image Hosting](https://skyimg.de/) 的公共图片分享 API
+感谢 [ExchangeRate-API](https://www.exchangerate-api.com/) 提供的汇率数据
 
 ---
 
