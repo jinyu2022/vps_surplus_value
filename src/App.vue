@@ -106,17 +106,17 @@
             </template>
 
             <el-descriptions :column="1" border size="large">
-              <el-descriptions-item label="交易日期:">{{
+              <el-descriptions-item label="交易日期">{{
                 results.displayTransactionDate
               }}</el-descriptions-item>
-              <el-descriptions-item label="外币汇率:">{{
+              <el-descriptions-item label="外币汇率">{{
                 results.displayForeignRate.toFixed(4)
               }}</el-descriptions-item>
-              <el-descriptions-item label="续费价格:"
+              <el-descriptions-item label="续费价格"
                 >{{ results.renewalPrice }} {{ formData.currency }} /
                 {{ getPaymentCycleText() }}
               </el-descriptions-item>
-              <el-descriptions-item label="剩余天数:">
+              <el-descriptions-item label="剩余天数">
                 <el-tag
                   :type="results.remainingDays > 30 ? 'success' : 'danger'"
                 >
@@ -124,7 +124,7 @@
                 </el-tag>
                 （于 {{ results.expiryStatus }} 过期）
               </el-descriptions-item>
-              <el-descriptions-item label="剩余价值:">
+              <el-descriptions-item label="剩余价值">
                 <strong style="color: #e6a23c"
                   >{{ results.remainingValue.toFixed(2) }} 元</strong
                 >
