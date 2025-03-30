@@ -22,7 +22,7 @@
 
               <el-form-item label="续费金额">
                 <el-input
-                  v-model.number="formData.renewalAmount"
+                  v-model="formData.renewalAmount"
                   :precision="2"
                   :step="1"
                   :min="0"
@@ -69,15 +69,17 @@
               </el-form-item>
 
               <el-form-item label="到期时间">
-                <el-date-picker
-                  v-model="formData.expiryDate"
-                  :disabled-date="(date) => date < new Date()"
-                  type="date"
-                  placeholder="选择到期日期"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  style="width: 100%"
-                />
+                <el-config-provider :locale="zhCn">
+                  <el-date-picker
+                    v-model="formData.expiryDate"
+                    :disabled-date="(date) => date < new Date()"
+                    type="date"
+                    placeholder="选择到期日期"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD"
+                    style="width: 100%"
+                  />
+                </el-config-provider>
               </el-form-item>
 
               <el-form-item>
@@ -132,8 +134,13 @@
             <div class="share-section">
               <el-text type="info" size="small">图片分享链接</el-text>
               <div class="share-buttons">
-                <el-button :icon="View" @click="viewLink">查看</el-button>
-                <el-button :icon="CopyDocument" @click="copyLink"
+                <el-button :icon="View" @click="viewLink" :disabled="!shareLink"
+                  >查看</el-button
+                >
+                <el-button
+                  :icon="CopyDocument"
+                  @click="copyLink"
+                  :disabled="!shareLink"
                   >复制</el-button
                 >
               </div>
@@ -175,7 +182,9 @@ import {
   ElLink,
   ElIcon,
   ElTooltip,
+  ElConfigProvider,
 } from "element-plus";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 import {
   Calendar,
   Tickets,
@@ -212,10 +221,16 @@ const exchangeRates = reactive({
 const formData = reactive({
   referenceRate: 7.267, // 参考汇率值
   rateUpdateTime: "尚未更新", // 汇率更新时间
-  renewalAmount: 12.0, // 续费金额
+  renewalAmount: "12", // 续费金额
   currency: "USD", // 货币类型，默认美元
   paymentCycle: "Yearly", // 付款周期，默认年付
-  expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-'), // 到期日期
+  expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000)
+    .toLocaleDateString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replace(/\//g, "-"), // 到期日期
 });
 
 /**
@@ -362,14 +377,18 @@ const getPaymentCycleText = () => {
 const calculateRemainingValue = () => {
   // 基本输入验证
   if (
-    typeof formData.renewalAmount !== "number" ||
+    typeof results.renewalPrice !== "number" ||
     !formData.expiryDate ||
-    formData.renewalAmount < 0
+    results.renewalPrice < 0
   ) {
     ElMessage.error("请确保所有必填项已正确填写，且金额为正数。");
     return;
   }
   const expiryDate = new Date(formData.expiryDate); // 到期日期
+  if (isNaN(expiryDate.getTime())) {
+    ElMessage.error("输入的到期日期无效，请检查格式并重新输入。");
+    return;
+  }
   const today = new Date(); // 当前日期，用于比较
 
   // 确保日期有效
@@ -383,8 +402,8 @@ const calculateRemainingValue = () => {
   // 计算订阅周期的总价值（人民币）
   const costPerCycleCNY =
     formData.currency === "CNY"
-      ? parseFloat(formData.renewalAmount)
-      : parseFloat(formData.renewalAmount) * formData.referenceRate;
+      ? parseFloat(results.renewalPrice)
+      : parseFloat(results.renewalPrice) * formData.referenceRate;
   const daysInCycle = getDaysInCycle(formData.paymentCycle); // 获取周期天数
   const dailyValueCNY = daysInCycle > 0 ? costPerCycleCNY / daysInCycle : 0; // 计算每天的价值
   results.totalValue = costPerCycleCNY; // 当前周期支付的总价值
@@ -493,8 +512,12 @@ const uploadImage = async () => {
     if (response.ok) {
       const data = await response.json();
       console.log(data);
-      shareLink.value = data[0].url; // 假设返回的JSON中有一个url字段
-      ElMessage.success("图片上传成功！");
+      if (Array.isArray(data) && data[0] && data[0].url) {
+        shareLink.value = data[0].url; // 确保返回的JSON中有一个url字段
+        ElMessage.success("图片上传成功！");
+      } else {
+        throw new Error("API响应格式无效，未找到图片链接");
+      }
     } else {
       ElMessage.error("图片上传失败，请重试。");
     }
@@ -521,15 +544,29 @@ const copyLink = () => {
     ElMessage.error("请先上传图片以获取分享链接。");
     return;
   }
-  // 使用Clipboard API复制链接
-  navigator.clipboard
-    .writeText(`![image](${shareLink.value})`)
-    .then(() => {
-      ElMessage.success("（模拟）复制成功！");
-    })
-    .catch((err) => {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard
+      .writeText(`![image](${shareLink.value})`)
+      .then(() => {
+        ElMessage.success("复制成功！");
+      })
+      .catch((err) => {
+        ElMessage.error("复制失败: ", err);
+      });
+  } else {
+    // Fallback for browsers without Clipboard API support
+    const tempInput = document.createElement("input");
+    tempInput.value = `![image](${shareLink.value})`;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+      document.execCommand("copy");
+      ElMessage.success("复制成功！");
+    } catch (err) {
       ElMessage.error("复制失败: ", err);
-    });
+    }
+    document.body.removeChild(tempInput);
+  }
 };
 
 // 组件挂载时获取汇率数据
