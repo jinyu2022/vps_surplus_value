@@ -240,9 +240,9 @@ const formData = reactive({
 const results = reactive({
   displayTransactionDate: currentDate, // 显示的交易日期
   displayForeignRate: computed(() => formData.referenceRate), // 显示的外币汇率
-  renewalPrice: computed(() => formData.renewalAmount), // 续费价格
+  renewalPrice: computed(() => parseFloat(formData.renewalAmount)), // 续费价格
   remainingDays: 0, // 剩余天数
-  expiryStatus: computed(() => parseFloat(formData.expiryDate)), // 到期日期
+  expiryStatus: computed(() => formData.expiryDate), // 到期日期
   remainingValue: 0.0, // 剩余价值（人民币）
   totalValue: 0.0, // 总价值（人民币）
 });
