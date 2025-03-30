@@ -22,7 +22,7 @@
 
               <el-form-item label="续费金额">
                 <el-input
-                  v-model.number="formData.renewalAmount"
+                  v-model="formData.renewalAmount"
                   :precision="2"
                   :step="1"
                   :min="0"
@@ -227,7 +227,7 @@ const results = reactive({
   displayForeignRate: computed(() => formData.referenceRate), // 显示的外币汇率
   renewalPrice: computed(() => formData.renewalAmount), // 续费价格
   remainingDays: 0, // 剩余天数
-  expiryStatus: computed(() => formData.expiryDate), // 到期日期
+  expiryStatus: computed(() => parseFloat(formData.expiryDate)), // 到期日期
   remainingValue: 0.0, // 剩余价值（人民币）
   totalValue: 0.0, // 总价值（人民币）
 });
