@@ -505,10 +505,13 @@ const uploadImage = async () => {
   formDataImg.append("file", blob, "vps_calculator.svg");
 
   try {
-    const response = await fetch("https://skyimg.de/api/upload", {
-      method: "POST",
-      body: formDataImg,
-    });
+    const response = await fetch(
+      `https://proxy.corsfix.com/?https://skyimg.net/api/upload`,
+      {
+        method: "POST",
+        body: formDataImg,
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       console.log(data);
